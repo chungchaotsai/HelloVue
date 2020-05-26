@@ -1,61 +1,5 @@
 export default null // Force module mode
 
-// 1. For each of these values, what type will TypeScript infer?
-
-// 1a
-let a = 1042 // number
-
-// 1b
-let b = 'apples and oranges' // string
-
-// 1c
-const c = 'pineapples' // 'pineapples'
-
-// 1d
-let d = [true, true, false] // boolean[]
-
-// 1e
-let e = { type: 'ficus' } // {type: string}
-
-// 1f
-let f = [1, false] // (number | boolean)[]
-
-// 1g
-const g = [3] // number[]
-
-// 1h
-let h = null // any
-
-// 2. Why does each of these throw the error it does?
-
-// 2a
-let i: 3 = 3
-console.log("2a: " + typeof (i)) // Error TS2322: Type '4' is not assignable to type '3'.
-
-/*
-i's type is the type literal 3. The type of 4 is the type literal 4, which is not assignable to the type literal 3.
-*/
-
-// 2b
-let j = [1, 2, 3]
-j.push(4)
-//j.push('5') 
-// Error TS2345: Argument of type '"5"' is not
-// assignable to parameter of type 'number'.
-
-/*
-Since j was initialized with a set of numbers, TypeScript inferred j's type as number[].
-The type of '5' is the type literal '5', which is not assignable to number.
-*/
-
-// 2c
-//let k: notakeyword = 4 
-// Error TS2322: Type '4' is not assignable to type 'never'.
-
-/*
-never is the bottom type. That means it's assignable to every other type, but no type is
-assignable to never.
-*/
 
 // 2d
 let l: unknown = 4
@@ -65,10 +9,84 @@ if (typeof (l) == 'number') {
 }
 // 原來無判斷式
 
+// 2e symbol
+function _2e() {
+    let a = Symbol('a')         // symbol
+    let b: symbol = Symbol('a') // symbol
+    var c = a === b             // boolean
+    console.log("2e: " + c);
+    //let d = a + 'x'             // Error TS2469: The '+' operator cannot be applied
+    // to type 'symbol'.
+}
+_2e();
 
-/*
-unknown represent a value that could be anything at runtime. To prove to TypeScript that what
-you're doing is safe, you have to first prove to TypeScript that a value of type unknown actually
-has a more specific subtype. You do that by refining the value using typeof, instanceof, or
-another type query or type guard.
-*/
+// Object 2f
+function _2f() {
+    let a: {
+        b: number
+    } = { b: 12 }
+    let ccc = a.b
+}
+
+// 2g
+class Person {
+    constructor(
+        public firstName: string,   // public is shorthand for
+        // this.firstName = firstName
+        public lastName: string
+    ) { }
+}
+
+let c2: {
+    firstName: string
+    lastName: string
+} = {
+    firstName: 'john',
+    lastName: 'barrowman'
+}
+
+let a2: {
+    b: number
+    c?: string
+    [key: number]: boolean
+}
+
+a2 = { b: 1 }
+a2 = { b: 1, c: undefined }
+a2 = { b: 1, c: 'd' }
+a2 = { b: 1, 10: true }
+a2 = { b: 1, 10: true, 20: false }
+//a2 = { 10: true }
+// Error TS2741: Property 'b' is missing in type
+// '{10: true}'.
+//a2 = { b: 1, 33: 'red' }   
+// Error TS2741: Type 'string' is not assignable
+// to type 'boolean'.
+
+// 2h Index Signatures
+let airplaneSeatingAssignments: {
+    [seatNumber: string]: string
+} = {
+    '34D': 'Boris Cherny',
+    '34E': 'Bill Gates'
+}
+
+let user: {
+    readonly firstName: string
+} = {
+    firstName: 'abby'
+}
+console.log("2h: " + user.firstName) // string
+
+// 
+type Age = number
+type PersonT = {
+    name: string
+    age: Age
+}
+
+let age: Age = 55
+let driver: PersonT = {
+    name: 'James May'
+  age: age
+}
